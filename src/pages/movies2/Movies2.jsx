@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import PageLayout from "../../components/layouts/PageLayout";
 import ModalDelete from "../../components/modal/ModalDelete";
-import TableData from "../../components/table/Table";
-import {useQuery, useQueryClient} from "react-query";
-import {useHistory} from "react-router-dom";
-import {deleteMovie, getAllMovies} from "../../services/movies";
+import TableDataWithPagination from "../../components/table2/Table2";
+import {useQueryClient} from "react-query";
+import {deleteMovie, getAllMoviesWithPagination} from "../../services/movies";
 import Button from "react-bootstrap/Button";
 import {useModal} from "../../contexts/ModalContext";
 import MovieForm from "./form/MovieForm";
+import Select from "../../components/select/Select";
 
 
 const headers = [
@@ -20,14 +20,10 @@ const headers = [
 ]
 
 const Movies2 = () => {
-    const {open, close} = useModal();
+    const {open} = useModal();
     const queryClient = useQueryClient();
-    const history = useHistory();
     const [modalData, setModalData] = useState();
 
-    const {data} = useQuery("movies", getAllMovies)
-
-    //query.data
 
     const onDelete = () => {
         if(modalData?.id){
@@ -48,7 +44,7 @@ const Movies2 = () => {
         }>
             Dodaj
         </Button>
-        <TableData
+        <TableDataWithPagination
             headers={[...headers,
                 {key: 'Izmijeni', title: 'Izmijeni',
                     render: (data) => <button
@@ -66,8 +62,10 @@ const Movies2 = () => {
                         titleName={"filma"}
                         onBtnClick={() => setModalData(data)}
                     />}]}
-            rows={data?.data}
+            queryKey="movies"
+            queryFn={getAllMoviesWithPagination}
         />
+        <Select optionLabel="directorName"/>
     </PageLayout>
 }
 
